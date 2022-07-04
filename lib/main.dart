@@ -65,6 +65,15 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             Text(
               'selected tab: ${selectedIndex + 1}',
             ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  for (int i = 0; i < _titles.length; i++)
+                    Text('TabBarView: page ${i + 1}'),
+                ],
+              ),
+            ),
           ],
         ),
       ),
