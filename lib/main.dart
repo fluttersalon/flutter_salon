@@ -39,14 +39,52 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text('enabled'),
             MyElevatedButton(
               onPressed: () {},
               message: 'Sign in',
             ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Text('disabled'),
             MyElevatedButton(
               onPressed: null,
               message: 'Sign in',
-            )
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: const StadiumBorder(),
+              ),
+              child: Container(
+                  height: 20,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xfffec230), Color(0xfff9a825)],
+                    ),
+                  ),
+                  child: Text('ABC')),
+            ),
+            Container(
+                height: 20,
+                width: 150,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color(0xfffec230), Color(0xfff9a825)],
+                  ),
+                ),
+                child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: const StadiumBorder(),
+                    ),
+                    child: Text('ABC'))),
           ],
         ),
       ),
