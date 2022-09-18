@@ -468,4 +468,32 @@ main() {
     final match = reg.allMatches('AB1aAB2aAB3');
     expect(match.length, 3);
   });
+
+  test('日本語', () {
+    final regHiragana = RegExp('[\u3040-\u309F]');
+    expect(regHiragana.hasMatch('あ'), true);
+    expect(regHiragana.hasMatch('を'), true);
+    expect(regHiragana.hasMatch('ぁ'), true);
+    expect(regHiragana.hasMatch('だ'), true);
+
+    expect(regHiragana.hasMatch('A'), false);
+    expect(regHiragana.hasMatch('ア'), false);
+
+    final regKatakana = RegExp('[\u30A0-\u30FF]');
+    expect(regKatakana.hasMatch('ア'), true);
+    expect(regKatakana.hasMatch('ヲ'), true);
+    expect(regKatakana.hasMatch('ァ'), true);
+    expect(regKatakana.hasMatch('ダ'), true);
+
+    expect(regKatakana.hasMatch('A'), false);
+    expect(regKatakana.hasMatch('あ'), false);
+
+    final regKanji = RegExp('[\u4E00-\u9FFF]');
+    expect(regKanji.hasMatch('亜'), true);
+    expect(regKanji.hasMatch('正'), true);
+
+    expect(regKanji.hasMatch('A'), false);
+    expect(regKanji.hasMatch('あ'), false);
+    expect(regKanji.hasMatch('ア'), false);
+  });
 }
