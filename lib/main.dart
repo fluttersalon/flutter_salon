@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_salon/statelesswidget_condition_importer/widget_finder.dart';
+import 'package:flutter_salon/widget_condition_importer/text_finder.dart';
+import 'package:flutter_salon/data_importer/data_importer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,14 +32,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,21 +42,16 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+            Text(DataImporter().getValue('test')),
+            TextFinder().getWidget('from main'),
+            WidgetFinder('test'),
+            Image(
+                image: NetworkImage(
+                    'https://avatars.githubusercontent.com/u/13707135')),
+            Image.network('https://avatars.githubusercontent.com/u/13707135'),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
