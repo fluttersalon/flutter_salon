@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_salon/outer_server_image/outer_server_image.dart';
 import 'package:flutter_salon/statelesswidget_condition_importer/widget_finder.dart';
 import 'package:flutter_salon/widget_condition_importer/text_finder.dart';
 import 'package:flutter_salon/data_importer/data_importer.dart';
@@ -32,6 +33,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final imageDash =
+      'https://flutter.salon/wp-content/uploads/2022/10/dash_warrior.png';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+/*
             Text(DataImporter().getValue('test')),
             TextFinder().getWidget('from main'),
             WidgetFinder('test'),
@@ -49,6 +54,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 image: NetworkImage(
                     'https://avatars.githubusercontent.com/u/13707135')),
             Image.network('https://avatars.githubusercontent.com/u/13707135'),
+  */
+            Image.network(imageDash),
+            SizedBox(
+              height: 1080 / 2,
+              width: 1920 / 2,
+              child: OuterServerImage(
+                imageDash,
+              ),
+            ),
           ],
         ),
       ),
