@@ -255,6 +255,33 @@ main() {
     expect(regAtoE.hasMatch('a'), false);
   });
 
+  test('範囲を表さないマイナスは隅に寄せる', () {
+    final reg1_9 = RegExp(r'[1-9]');
+    final reg19_ = RegExp(r'[19-]');
+    final reg_19 = RegExp(r'[-19]');
+
+    expect(reg1_9.hasMatch('8'), true);
+    expect(reg_19.hasMatch('8'), false);
+    expect(reg19_.hasMatch('8'), false);
+
+    expect(reg1_9.hasMatch('-'), false);
+    expect(reg_19.hasMatch('-'), true);
+    expect(reg19_.hasMatch('-'), true);
+  });
+
+  test(']を[]で使用するときは、\をつける', () {
+    final reg = RegExp(r'[AB\]]');
+    final regNot = RegExp(r'[^\]AB]');
+
+    expect(reg.hasMatch('A'), true);
+    expect(reg.hasMatch(']'), true);
+    expect(reg.hasMatch('C'), false);
+
+    expect(regNot.hasMatch('A'), false);
+    expect(regNot.hasMatch(']'), false);
+    expect(regNot.hasMatch('C'), true);
+  });
+
   test('グループを取得', () {
     final regGroup = RegExp(r'^http://([^/]+)/(.+)$');
     final matches =
@@ -304,6 +331,13 @@ main() {
     final regName = RegExp(r'c(?<name>at|ut)');
     expect(regName.firstMatch('cat')!.namedGroup('name'), 'at');
     expect(regName.firstMatch('cut')!.namedGroup('name'), 'ut');
+  });
+
+  test('グループでリピート', () async {
+    final regRepease = RegExp(r'^c(at|ut)+$');
+    expect(regRepease.hasMatch('cat'), true);
+    expect(regRepease.hasMatch('catut'), true);
+    expect(regRepease.hasMatch('catcut'), false);
   });
 
   test('最終的にマッチに加わらない部分(先読み・後読み)', () {
