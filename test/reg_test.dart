@@ -89,6 +89,24 @@ main() {
     expect(regOnlyA.hasMatch('abA'), false);
   });
 
+  test('複数行にマッチ', () {
+    const lineN = '1END\n2END\n3END';
+    const lineRn = '1END\r\n2END\r\n3END';
+
+    final regDefault = RegExp(r'END$');
+    final regSingleLine = RegExp(r'END$', multiLine: false);
+    final regMultiLine = RegExp(r'END$', multiLine: true);
+
+    expect(regDefault.allMatches(lineN).length, 1);
+    expect(regDefault.allMatches(lineRn).length, 1);
+
+    expect(regSingleLine.allMatches(lineN).length, 1);
+    expect(regSingleLine.allMatches(lineRn).length, 1);
+
+    expect(regMultiLine.allMatches(lineN).length, 3);
+    expect(regMultiLine.allMatches(lineRn).length, 3);
+  });
+
   test('連続した文字列', () {
     final reg = RegExp(r'ABC');
     expect(reg.hasMatch('ABC'), true);
@@ -529,5 +547,26 @@ main() {
     expect(regKanji.hasMatch('A'), false);
     expect(regKanji.hasMatch('あ'), false);
     expect(regKanji.hasMatch('ア'), false);
+  });
+
+  test('CSVファイルの一行をグループで読み込む', () async {
+    const line = 'ナイトパレード,ハリウッドエリア,19:00';
+
+    final regNo = RegExp(r'^([^,]*),([^,]*),(\d+):(\d{2})$');
+    final matchNo = regNo.firstMatch(line);
+    expect(matchNo, isNotNull);
+    expect(matchNo!.group(1), 'ナイトパレード');
+    expect(matchNo.group(2), 'ハリウッドエリア');
+    expect(matchNo.group(3), '19');
+    expect(matchNo.group(4), '00');
+
+    final regNamed = RegExp(
+        r'^(?<name>[^,]*),(?<place>[^,]*),(?<hour>\d+):(?<minute>\d{2})$');
+    final matchNamed = regNamed.firstMatch(line);
+    expect(matchNamed, isNotNull);
+    expect(matchNamed!.namedGroup('name'), 'ナイトパレード');
+    expect(matchNamed.namedGroup('place'), 'ハリウッドエリア');
+    expect(matchNamed.namedGroup('hour'), '19');
+    expect(matchNamed.namedGroup('minute'), '00');
   });
 }
