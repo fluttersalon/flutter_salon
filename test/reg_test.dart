@@ -515,6 +515,27 @@ main() {
     expect(regOneAndLess.firstMatch('AA')!.group(0), 'A');
   });
 
+  test('後方参照', () async {
+    final reg1 = RegExp(r'(aaa).*\1');
+    expect(reg1.hasMatch('aaa123aaa'), true);
+    expect(reg1.hasMatch('aaa123bbb'), false);
+
+    final reg12 = RegExp(
+        r'(1)(2)(3)(4)(5)(6)(7)(8)(9)(0)(11)(12)\1\2\3\4\5\6\7\8\9\10\11\12');
+    expect(reg12.hasMatch('1234567890111212345678901112'), true);
+    expect(reg12.hasMatch('1234567890111212345678901110'), false);
+
+    final regDouble = RegExp(r'(ab(c|d))_\1\2');
+    expect(regDouble.hasMatch('abc_abcc'), true);
+    expect(regDouble.hasMatch('abd_abdd'), true);
+    expect(regDouble.hasMatch('abc_abcd'), false);
+
+    final regHtml = RegExp(r'<(p|pre)>.*<(p|pre)>.*</\2>.*</\1>');
+    expect(regHtml.hasMatch('<pre>aaa<p>sdaa</p>ksdfs</pre>'), true);
+    expect(regHtml.hasMatch('<p>aaa<pre>sdaa</pre>ksdfs</p>'), true);
+    expect(regHtml.hasMatch('<p>aaa<p>sdaa</p>ksdfs</pre>'), false);
+  });
+
   test('複数回の一致しているケース', () {
     final reg = RegExp(r'AB');
     final match = reg.allMatches('AB1aAB2aAB3');
