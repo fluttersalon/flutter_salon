@@ -535,6 +535,10 @@ main() {
     expect(regHtml.hasMatch('<p>aaa<pre>sdaa</pre>ksdfs</p>'), true);
     expect(regHtml.hasMatch('<p>aaa<p>sdaa</p>ksdfs</pre>'), false);
   });
+  test('Dartは正規表現の POSIX文字クラス には対応していないと思われる', () async {
+    expect(RegExp(r'[:alnum:]').hasMatch('1'), false);
+    expect(RegExp(r'[[:alnum:]]').hasMatch('1'), false);
+  });
 
   test('複数回の一致しているケース', () {
     final reg = RegExp(r'AB');
