@@ -71,6 +71,15 @@ main() {
     expect('AaA'.replaceAll(regA, 'B'), 'BaB');
   });
 
+  test('正規表現のコンテキストはサポートとしていない、と思われる', () {
+    final reg = RegExp(r'B');
+    expect('ABC'.replaceFirst(reg, r'$_'), r'A$_C');
+    expect('ABC'.replaceFirst(reg, r'$&'), r'A$&C');
+    expect('ABC'.replaceFirst(reg, r'$`'), r'A$`C');
+
+    expect('ABC'.replaceFirst(reg, r'\&'), r'A\&C');
+  });
+
   test('文字列の開始・終了への一致', () {
     final regStartWithA = RegExp(r'^A');
     final regEndWithA = RegExp(r'A$');
@@ -105,6 +114,56 @@ main() {
 
     expect(regMultiLine.allMatches(lineN).length, 3);
     expect(regMultiLine.allMatches(lineRn).length, 3);
+  });
+
+  test('何文字目からかマッチしているか確認する', () async {
+    const string = 'Dash is a bird';
+
+    final regExp = RegExp(r'bird');
+    expect(regExp.matchAsPrefix(string, 10), isNotNull);
+
+    expect(regExp.matchAsPrefix(string, 9), isNull);
+    expect(regExp.matchAsPrefix(string, 11), isNull);
+    expect(regExp.matchAsPrefix(string), isNull);
+  });
+
+  test('stringMatchでマッチ部分を文字列で取得', () async {
+    final regExp = RegExp(r'bird');
+    expect(regExp.stringMatch('bird'), 'bird');
+    expect(regExp.stringMatch('a bird'), 'bird');
+
+    expect(regExp.stringMatch('bir'), isNull);
+  });
+
+  test('RegExpMatchのプロパティ', () async {
+    const string = 'Dash is a bird.';
+
+    final regExp = RegExp(r'bird');
+    final match = regExp.firstMatch(string)!;
+    expect(match.start, 10);
+    expect(match.end, 14);
+    expect(match.pattern, regExp);
+  });
+
+  test('正規表現で一致する文字列前後に文字を追加', () {
+    final regA = RegExp(r'A');
+    expect('ABC'.replaceFirst(regA, '@A'), '@ABC');
+    expect('ABC'.replaceFirst(regA, 'A@'), 'A@BC');
+  });
+
+  test('マッチ前後に文字列を追加', () async {
+    const original = 'Dash is a bird.';
+    const result = 'Dash is a "bird".';
+
+    final regExp = RegExp(r'bird');
+    final match = regExp.firstMatch(original)!;
+
+    final value = original.substring(0, match.start) +
+        '"' +
+        match.group(0)! +
+        '"' +
+        original.substring(match.end);
+    expect(value, result);
   });
 
   test('連続した文字列', () {
@@ -197,7 +256,7 @@ main() {
     expect(regBetweenTwoAndFour.hasMatch('AAAAA'), false);
   });
 
-  test('単語 \b', () {
+  test('単語の境界 \b', () {
     final reg = RegExp(r'\bcat\b');
     expect(reg.hasMatch('cat'), true);
     expect(reg.hasMatch('cats'), false);
@@ -235,6 +294,47 @@ main() {
 
     expect(regWord.hasMatch('!@#%^&*()+='), false);
     expect(regNotWord.hasMatch('!@#%^&*()+='), true);
+  });
+
+  test('空白・空白以外 \s \S', () async {
+    final regSpace = RegExp(r'\s');
+    final regNotSpace = RegExp(r'\S');
+
+    // 空白
+    expect(regSpace.hasMatch(' '), true);
+    expect(regNotSpace.hasMatch(' '), false);
+
+    // 全角空白
+    expect(regSpace.hasMatch('　'), true);
+    expect(regNotSpace.hasMatch('　'), false);
+
+    // フォームフィード文字（改ページ）
+    expect(regSpace.hasMatch('\f'), true);
+    expect(regNotSpace.hasMatch('\f'), false);
+
+    //改行文字
+    expect(regSpace.hasMatch('\n'), true);
+    expect(regNotSpace.hasMatch('\n'), false);
+
+    // 復帰文字
+    expect(regSpace.hasMatch('\r'), true);
+    expect(regNotSpace.hasMatch('\r'), false);
+
+    // タブ文字
+    expect(regSpace.hasMatch('\t'), true);
+    expect(regNotSpace.hasMatch('\t'), false);
+
+    // 垂直タブ文字
+    expect(regSpace.hasMatch('\v'), true);
+    expect(regNotSpace.hasMatch('\v'), false);
+
+    // 文字 →マッチせず
+    expect(regSpace.hasMatch('A'), false);
+    expect(regNotSpace.hasMatch('A'), true);
+
+    // アラート文字（ベル）、バックスペース文字、行末の改行を抑止する →マッチせず
+    expect(regSpace.hasMatch('\a\b\c'), false);
+    expect(regNotSpace.hasMatch('\a\b\c'), true);
   });
 
   test('否定', () {
@@ -311,6 +411,12 @@ main() {
     expect(match.group(0), 'http://domain.com/path1/path2');
     expect(match.group(1), 'domain.com');
     expect(match.group(2), 'path1/path2');
+
+    // リストでまとめてグループを取得
+    final groups = match.groups([1, 2]);
+    expect(groups.length, 2);
+    expect(groups[0], 'domain.com');
+    expect(groups[1], 'path1/path2');
   });
 
   test('グループ名で取得', () {
@@ -503,16 +609,31 @@ main() {
     expect(match.namedGroup('month3'), '01');
   });
 
-  test('最大量指定子(欲張りな) と 最小量指定子(控えめな)', () {
-    final regMore = RegExp(r'A*');
-    final regLess = RegExp(r'A*?');
-    final regOneAndMore = RegExp(r'A+');
-    final regOneAndLess = RegExp(r'A+?');
+  test('最大量指定子(欲張りな Greedy) と 最小量指定子(控えめな Reluctant, Non-greedy)', () {
+    // 0回以上の繰り返し
+    final regMoreGreedy = RegExp(r'A*');
+    final regMore = RegExp(r'A*?');
+    expect(regMoreGreedy.firstMatch('AA')!.group(0), 'AA');
+    expect(regMore.firstMatch('AA')!.group(0), '');
 
-    expect(regMore.firstMatch('AA')!.group(0), 'AA');
-    expect(regLess.firstMatch('AA')!.group(0), '');
-    expect(regOneAndMore.firstMatch('AA')!.group(0), 'AA');
-    expect(regOneAndLess.firstMatch('AA')!.group(0), 'A');
+    // 1回以上の繰り返し
+    final regOneAndMoreGreedy = RegExp(r'A+');
+    final regOneAndMore = RegExp(r'A+?');
+    expect(regOneAndMoreGreedy.firstMatch('AA')!.group(0), 'AA');
+    expect(regOneAndMore.firstMatch('AA')!.group(0), 'A');
+
+    // 0回か1回
+    final regZeroOrOneGreedy = RegExp(r'A?');
+    final regZeroOrOne = RegExp(r'A??');
+    expect(regZeroOrOneGreedy.firstMatch('AA')!.group(0), 'A');
+    expect(regZeroOrOne.firstMatch('AA')!.group(0), '');
+
+    // 最小、最大の指定
+    final regMinMaxGreedy = RegExp(r'A{2,4}');
+    final regMinMax = RegExp(r'A{2,4}?');
+
+    expect(regMinMaxGreedy.firstMatch('AAAAA')!.group(0), 'AAAA');
+    expect(regMinMax.firstMatch('AAAAA')!.group(0), 'AA');
   });
 
   test('後方参照', () async {
@@ -593,5 +714,22 @@ main() {
     expect(matchNamed.namedGroup('place'), 'ハリウッドエリア');
     expect(matchNamed.namedGroup('hour'), '19');
     expect(matchNamed.namedGroup('minute'), '00');
+  });
+
+  test('ひらがな から カタカナ への変換', () async {
+    String convert(String value) => value.replaceAllMapped(
+        RegExp('[ぁ-ゔ]'),
+        (Match match) =>
+            String.fromCharCode(match.group(0)!.codeUnitAt(0) + 0x60));
+
+    expect(convert('あいを'), 'アイヲ');
+  });
+
+  test('片仮名 から 平仮名 への変換', () async {
+    String convert(String value) => value.replaceAllMapped(
+        RegExp('[ァ-ン]'),
+        (Match match) =>
+            String.fromCharCode(match.group(0)!.codeUnitAt(0) - 0x60));
+    expect(convert('アイヲ'), 'あいを');
   });
 }
