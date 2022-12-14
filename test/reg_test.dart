@@ -71,6 +71,14 @@ main() {
     expect('AaA'.replaceAll(regA, 'B'), 'BaB');
   });
 
+  test('正規表現で一致する文字列を使って置換', () {
+    final reg = RegExp(r'[B-E]');
+    expect(
+      'ABACADAE'.replaceAllMapped(reg, (match) => '${match[0]}_'),
+      'AB_AC_AD_AE_',
+    );
+  });
+
   test('正規表現のコンテキストはサポートとしていない、と思われる', () {
     final reg = RegExp(r'B');
     expect('ABC'.replaceFirst(reg, r'$_'), r'A$_C');
