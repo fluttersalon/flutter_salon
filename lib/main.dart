@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,10 +31,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Color _color = Colors.white;
 
   void _incrementCounter() {
     setState(() {
       _counter++;
+      _color = _counter % 2 == 0 ? Colors.white : Colors.black;
     });
   }
 
@@ -60,8 +63,34 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+        child: IcooonMonoIcon(
+            path: 'assets/images/bat.svg', size: 32, color: _color),
+      ),
+    );
+  }
+}
+
+/// SVGのアイコンを表示します
+class IcooonMonoIcon extends StatelessWidget {
+  /// [path]のアセットのSVGファイルを[size]の大きさ、[color]の色で表示します。
+  const IcooonMonoIcon({
+    super.key,
+    required this.path,
+    required this.size,
+    required this.color,
+  });
+
+  final String path;
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      path,
+      width: size,
+      height: size,
+      color: color,
     );
   }
 }
