@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -6,22 +5,22 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        useMaterial3: true,
+        primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: '押すと震えるボタン'),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -30,10 +29,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _keyShakeWidget = GlobalKey<ShakeWidgetState>();
-  final _keyFastShakeWidget = GlobalKey<ShakeWidgetState>();
-  final _keySlowShakeWidget = GlobalKey<ShakeWidgetState>();
-
+  var _checked = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,90 +39,41 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: [
-            ShakeWidget(
-              key: _keyShakeWidget,
-              child: FilledButton(
-                onPressed: () => _keyShakeWidget.currentState?.shake(),
-                child: const Text('震える'),
+            Card(
+              child: ExpansionTile(
+                title: Text('親アイテム'),
+                children: <Widget>[
+                  ListTile(title: Text('子アイテム1')),
+                  ListTile(title: Text('子アイテム2')),
+                ],
               ),
             ),
-            ShakeWidget(
-              key: _keyFastShakeWidget,
-              count: 5,
-              offset: 10,
-              duration: const Duration(milliseconds: 300),
-              child: FilledButton(
-                onPressed: () => _keyFastShakeWidget.currentState?.shake(),
-                child: const Text('激しく震える'),
-              ),
-            ),
-            ShakeWidget(
-              key: _keySlowShakeWidget,
-              count: 2,
-              offset: 50,
-              duration: const Duration(milliseconds: 3000),
-              child: FilledButton(
-                onPressed: () => _keySlowShakeWidget.currentState?.shake(),
-                child: const Text('ゆっくり震える'),
+            Card(
+              child: ExpansionTile(
+                title: Text('タイトル'),
+                backgroundColor: Colors.yellow,
+                leading: Icon(Icons.folder_open),
+                trailing: Checkbox(
+                  value: _checked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      _checked = value ?? false;
+                    });
+                  },
+                ),
+                children: [
+                  ListTile(
+                    title: Text('子要素1'),
+                  ),
+                  ListTile(
+                    title: Text('子要素2'),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
-  }
-}
-
-class ShakeWidget extends StatefulWidget {
-  const ShakeWidget({
-    Key? key,
-    required this.child,
-    this.offset = 10,
-    this.count = 3,
-    this.duration = const Duration(milliseconds: 300),
-    this.noStop = false,
-  }) : super(key: key);
-
-  final Widget child;
-  final double offset;
-  final int count;
-  final Duration duration;
-  final bool noStop;
-
-  @override
-  ShakeWidgetState createState() => ShakeWidgetState();
-}
-
-class ShakeWidgetState extends State<ShakeWidget>
-    with SingleTickerProviderStateMixin {
-  late final _animationController =
-      AnimationController(vsync: this, duration: widget.duration);
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animationController,
-      child: widget.child,
-      builder: (context, child) {
-        final sineValue =
-            sin(widget.count * 2 * pi * _animationController.value);
-        return Transform.translate(
-          offset: Offset(sineValue * widget.offset, 0),
-          child: child,
-        );
-      },
-    );
-  }
-
-  void shake() {
-    _animationController
-        .forward()
-        .whenComplete(() => _animationController.reset());
   }
 }

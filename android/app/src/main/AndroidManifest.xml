@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.flutter_salon">
-   <application
+    <uses-permission android:name="android.permission.NFC"/>
+    <application
         android:label="flutter_salon"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">

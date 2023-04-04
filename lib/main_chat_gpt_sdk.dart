@@ -41,8 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   final openAI = OpenAI.instance.build(
     token: kOpenApiKey,
-    baseOption: HttpSetup(receiveTimeout: 60 * 1000),
-    isLogger: true,
+    baseOption: HttpSetup(),
+    isLog: true,
   );
 
   @override
@@ -94,11 +94,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<String> _sendMessage(String message) async {
     final request = CompleteText(
       prompt: message,
-      model: kTranslateModelV3,
+      model: kTextDavinci3,
       maxTokens: 200,
     );
 
-    final response = await openAI.onCompleteText(
+    final response = await openAI.onCompletion(
       request: request,
     );
     return response!.choices.first.text;

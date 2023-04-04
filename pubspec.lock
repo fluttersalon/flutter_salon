@@ -125,10 +125,10 @@ packages:
     dependency: "direct main"
     description:
       name: chat_gpt_sdk
-      sha256: "7c43dd508d3e70ea4bbf237721992c631b094d2ea5744b2d8b56c7cb5003e455"
+      sha256: "9e830e6a4e0d014211e9be1c5c6e1668beb5b21dc70bba009057555fd4b95889"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.0"
+    version: "2.0.5"
   checked_yaml:
     dependency: transitive
     description:
@@ -253,10 +253,10 @@ packages:
     dependency: transitive
     description:
       name: dio
-      sha256: "7d328c4d898a61efc3cd93655a0955858e29a0aa647f0f9e02d59b3bb275e2e8"
+      sha256: "3e5c4a94d112540d0c9a6b7f3969832e1604eb8cde0f88d0808382f9f632100b"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.6"
+    version: "5.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -480,6 +480,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.4"
+  nfc_manager:
+    dependency: "direct main"
+    description:
+      name: nfc_manager
+      sha256: cff1e59e316388f4508b4ba0cea4430e4ba39f8a68ecfb3e1256be25c13b0f4a
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.2.0"
   nm:
     dependency: transitive
     description:
@@ -648,6 +656,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
+  screen_protector:
+    dependency: "direct main"
+    description:
+      name: screen_protector
+      sha256: "5bf53d59403ace2c98e2664aef8be038b1bece962a17302564bc91bb902dd306"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.0"
   scroll_to_index:
     dependency: transitive
     description:
@@ -958,5 +974,5 @@ packages:
     source: hosted
     version: "3.1.1"
 sdks:
-  dart: ">=2.19.0 <3.0.0"
+  dart: ">=2.19.3 <3.0.0"
   flutter: ">=3.3.0"

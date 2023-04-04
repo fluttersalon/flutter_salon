@@ -45,5 +45,7 @@
 	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NFCReaderUsageDescription</key>
+    <string>App needs access to NFC in order for you to write and read tags</string>
 </dict>
 </plist>
